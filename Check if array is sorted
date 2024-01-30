@@ -1,0 +1,22 @@
+1st Solution - O(N) 
+int isSorted(int n, vector<int> a) {
+    for(int i = 0; i < n-1; i++)
+    {
+        if(a[i] > a[i+1])
+        return 0;
+    }
+    return 1;
+}
+
+2nd solution - O(N^2)
+int isSorted(int n, vector<int> a) {
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = i+1; j < n; j++)
+        {
+            if(a[i] > a[j])
+            return 0;
+        }
+    }
+    return 1;
+}
