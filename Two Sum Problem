@@ -15,7 +15,7 @@ public:
     }
 };
 
-Solution 2 - Using map data structure TC - O(N) SC - O(N)
+Solution 2 - Using map data structure TC - O(N^2) SC - O(N)
 
 class Solution {
 public:
