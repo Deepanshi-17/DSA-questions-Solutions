@@ -1,0 +1,47 @@
+Solution 1 - TC - O(N) SC - O(1)
+
+vector<int> alternateNumbers(vector<int>&a) {
+    // Write your code here.
+    int negIndex = 1;
+    int posIndex = 0;
+    vector<int>ans(a.size(),0);
+    for(int i = 0; i < a.size(); i++)
+    {
+        if(a[i] < 0)
+        {
+            ans[negIndex] = a[i];
+            negIndex += 2;
+        }
+        else
+        {
+            ans[posIndex] = a[i];
+            posIndex += 2;
+        }
+    }
+    return ans;
+}
+
+Solution 2 - TC - O(N + N/2) SC - O(N/2)
+vector<int> alternateNumbers(vector<int>&a) {
+    vector<int>neg;
+    vector<int>pos;
+    for(int i = 0; i < a.size(); i++)
+    {
+        if(a[i] < 0)
+        neg.push_back(a[i]);
+        else
+        pos.push_back(a[i]);
+    }
+    int j = 0;
+    int k = 0;
+    for(int i = 0; i < a.size(); i++)
+    {
+        if (i % 2 == 0) {
+        a[i] = pos[j];
+        j++;
+        } else {
+        a[i] = neg[k]; k++;
+        }
+    }
+    return a;
+}
