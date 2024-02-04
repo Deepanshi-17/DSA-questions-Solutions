@@ -1,0 +1,147 @@
+Solution 1 - TC - O(NXM x (N+M)) + O(NxM)  SC - O(N x M) 
+
+class Solution {
+public:
+    void markrow(int m, int row, vector<vector<int>>& visited)
+    {
+        for(int col = 0; col < m; col++)
+        {
+            visited[row][col] = -1;
+        }
+    }
+    void markcol(int n, int col, vector<vector<int>>& visited)
+    {
+        for(int row = 0; row < n; row++)
+        {
+            visited[row][col] = -1;
+        }
+    }
+    void setZeroes(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        int m = matrix[0].size();
+        vector<vector<int>>visited(n,vector<int>(m,0));
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = 0; j < m; j++)
+            {
+                if(matrix[i][j] == 0)
+                {
+                    markrow(m,i,visited);
+                    markcol(n,j,visited);
+                }
+            }
+        }
+
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = 0; j < m; j++)
+            {
+                if(visited[i][j] == -1)
+                {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+    }
+};
+
+Solution 2 - TC - O(NXM) + O(NxM) SC - O(N + M)
+
+class Solution {
+public:
+    void markrow(int ro, vector<int>& row)
+    {
+        row[ro] = -1;
+    }
+    void markcol(int co, vector<int>& col)
+    {
+        col[co] = -1;
+    }
+    void setZeroes(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        int m = matrix[0].size();
+        vector<int>row(n,0);
+        vector<int>col(m,0);
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = 0; j < m; j++)
+            {
+                if(matrix[i][j] == 0)
+                {
+                    markrow(i, row);
+                    markcol(j, col);
+                }
+            }
+        }
+
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = 0; j < m; j++)
+            {
+                if(row[i] == -1 || col[j]== -1)
+                {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+    }
+};
+
+Solution 3 - TC - O(2 * (N X M)) SC - O(1)
+
+class Solution {
+public:
+    void setZeroes(vector<vector<int>>& matrix) {
+        int col0 = 1;
+        int n = matrix.size();
+        int m = matrix[0].size();
+
+        for(int i = 0; i<n; i++)
+        {
+            for(int j = 0; j< m; j++)
+            {
+                if(matrix[i][j] == 0)
+                {
+                    matrix[i][0] = 0;
+                    if(j!=0)
+                    {
+                        matrix[0][j] = 0;
+                    }
+                    else
+                    {
+                        col0 = 0;
+                    }
+                }
+            }
+        }
+
+        for(int i = 1; i< n; i++)
+        {
+            for(int j = 1; j< m; j++)
+            {
+                if(matrix[i][j]!=0)
+                {
+                if(matrix[i][0] == 0 || matrix[0][j] == 0)
+                {
+                    matrix[i][j] = 0;
+                }
+                }
+            }
+        }
+        if(matrix[0][0] == 0)
+        {
+            for(int j = 0; j<m; j++)
+            {
+                matrix[0][j] = 0;
+            }
+        }
+        if(col0 == 0)
+        {
+            for(int j = 0; j< n; j++)
+            {
+                matrix[j][0] = 0;
+            }
+        }
+    }
+};
+
