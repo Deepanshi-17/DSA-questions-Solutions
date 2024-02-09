@@ -1,0 +1,54 @@
+Recursion TC - O(K^N) SC - O(N)
+int fun(int index, int k, vector<int> &height)
+{
+  if(index==0) return 0;
+  int x = INT_MAX;
+  for(int i = 1; i <=k; i++)
+  {
+    if(index - i >=0 )
+    x = min(x, (fun(index-i,k,height) + abs(height[index] - height[index-i])));
+  }
+  return x;
+}
+
+int minimizeCost(int n, int k, vector<int> &height){
+    return fun(n-1,k,height);
+}
+
+Memoization TC - O(N * K) SC - O(N)
+int fun(int index, int k, vector<int> &height, vector<int>& dp)
+{
+  if(dp[index] != -1) return dp[index];
+  if(index==0) return 0;
+  int x = INT_MAX;
+  for(int i = 1; i <=k; i++)
+  {
+    if(index - i >=0 )
+    x = min(x, (fun(index-i,k,height,dp) + abs(height[index] - height[index-i])));
+  }
+  return dp[index] = x;
+}
+
+int minimizeCost(int n, int k, vector<int> &height){
+  vector<int> dp(n,-1);
+  return fun(n-1,k,height, dp);
+}
+
+Tabulation TC - O(N*K) SC - O(N) 
+
+int minimizeCost(int n, int k, vector<int> &height){
+  vector<int> dp(n);
+  dp[0] = 0;
+  dp[1] = abs(height[1] - height[0]);
+  for(int i = 2; i < n; i++)
+  {
+    int x = INT_MAX;
+    for(int j = 1; j <= k; j++)
+    {
+      if(i-j >= 0)
+      x = min(x, dp[i-j] + abs(height[i]-height[i-j]));
+    }
+    dp[i] = x;
+  }
+  return dp[n-1];
+}
