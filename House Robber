@@ -1,0 +1,30 @@
+TC - O(N) + O(N) SC - O(2*N) ( for two arrays created)
+
+#include <bits/stdc++.h> 
+
+long long maximumNonAdjacentSum(vector<int> &nums){
+    int n = nums.size();
+    vector<long long>dp(n);
+    long long vprev = nums[0];
+    long long prev = max(nums[0],nums[1]);
+    for(int i = 2; i < n; i++)
+    {
+        long long curr = max(prev, vprev + nums[i]);
+        vprev = prev;
+        prev = curr;
+    }
+    return prev;
+}
+long long int houseRobber(vector<int>& valueInHouse)
+{
+    int n = valueInHouse.size();
+    if(n == 1) return valueInHouse[0];
+    vector<int>nums1;
+    vector<int>nums2;
+    for(int i = 0; i< n; i++)
+    {
+        if(i!=0) nums1.push_back(valueInHouse[i]);
+        if(i!=valueInHouse.size()-1) nums2.push_back(valueInHouse[i]);
+    }
+    return max(maximumNonAdjacentSum(nums1),maximumNonAdjacentSum(nums2));
+}
