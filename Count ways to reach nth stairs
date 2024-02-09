@@ -1,0 +1,59 @@
+Recursion 
+TC - O(2^N) SC - O(N)
+#include <bits/stdc++.h> 
+int fun(int n)
+{
+    if(n <= 1) return 1;
+    return fun(n-1) + fun(n-2);
+}
+int countDistinctWays(int nStairs) {
+    return fun(nStairs);
+}
+
+Memoization
+TC - O(N) SC - O(N + N)
+#include <bits/stdc++.h> 
+int mod = 1e9 + 7;
+int fun(int n, vector<int>& dp)
+{
+    if(dp[n] != -1) return dp[n];
+    if(n <= 1) return 1;
+    return dp[n] = (fun(n-1, dp) + fun(n-2, dp)) % mod;
+}
+int countDistinctWays(int nStairs) {
+    vector<int>dp(nStairs + 1,-1);
+    return fun(nStairs,dp);
+}
+
+Tabulation
+TC - O(N) SC - O(N)
+
+#include <bits/stdc++.h> 
+int mod = 1e9 + 7;
+int countDistinctWays(int nStairs) {
+    vector<int>dp(nStairs + 1);
+    dp[0] = 1;
+    dp[1] = 1;
+    for(int i = 2; i <= nStairs; i++)
+    {
+        dp[i] = (dp[i-1] + dp[i-2])%mod;
+    }
+    return dp[nStairs] % mod;
+}
+
+Space Optimization
+TC - O(N) SC - O(1)
+#include <bits/stdc++.h> 
+int mod = 1e9 + 7;
+int countDistinctWays(int nStairs) {
+    vector<int>dp(nStairs + 1);
+    int prev1 = 1;
+    int prev2 = 1;
+    for(int i = 2; i <= nStairs; i++)
+    {
+        int curr = (prev1 + prev2)%mod;
+        prev1 = prev2;
+        prev2 = curr;
+    }
+    return prev2 % mod;
+}
