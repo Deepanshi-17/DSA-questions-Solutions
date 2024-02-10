@@ -1,0 +1,81 @@
+Approach 1 - Generate all substrings
+
+TC - O(N^4) SC - O(1)
+class Solution {
+public:
+    bool palindr(string str) {
+        int start = 0;
+        int end = str.length()-1;
+        while (start < end) {
+            if (str[start++] != str[end--])
+                return false;
+        }
+        return true;
+    }
+    int countSubstrings(string s) {
+        int count = 0;
+        int n = s.length();
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = i; j < n; j++)
+            {
+                string ans;
+                for(int k = i; k <=j; k++)
+                {
+                    ans += s[k];
+                }
+                if(palindr(ans) == true)
+                    count++; 
+            }
+        }
+    return count;
+    }
+};
+
+Approach 2 - TC - O(N^3) SC - O(1)
+class Solution {
+public:
+    bool palindr(string str, int start, int end) {
+        while (start < end) {
+            if (str[start++] != str[end--])
+                return false;
+        }
+        return true;
+    }
+    int countSubstrings(string s) {
+        int count = 0;
+        int n = s.length();
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = i; j < n; j++)
+            {
+                if(palindr(s,i,j))
+                count++;
+            }
+        }
+    return count;
+    }
+};
+
+Approach 3 - TC - O(N^2) SC - O(1)
+class Solution {
+public:
+    int fun(string s, int left, int right)
+    {
+        int count = 0;
+        while(left >= 0 && right < s.length() && s[left--] == s[right++])
+        count++;
+        return count;
+    }
+    int countSubstrings(string s) {
+        int ans = 0;
+        int n = s.length();
+        for(int i = 0; i < n; i++)
+        {
+            int even = fun(s,i,i+1);
+            int odd = fun(s,i-1,i+1);
+            ans += even + odd + 1;
+        }
+        return ans;
+    }
+};
