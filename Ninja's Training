@@ -1,0 +1,117 @@
+Recursion TC - 2^(n*n) SC - O(N)
+#include<bits/stdc++.h>
+
+int fun(int n, int day, int col, int last, vector<vector<int>>& points)
+{
+  if(day == n) return 0;
+  int ma= 0;
+  for(int i = 0; i < 3; i++)
+  {
+    if(i != last)
+    {
+      ma = max(ma, points[day][i] + fun(n, day + 1, i, i, points));
+    }
+  }
+  return ma;
+}
+
+int ninjaTraining(int n, vector<vector<int>> &points)
+{
+    int last = n;
+    int maxi = INT_MIN;
+    for(int i = 0; i < 3; i++)
+    {
+      maxi = max(maxi, points[0][i] + fun(n,1,i,i,points));
+    }
+    return maxi;
+}
+
+Memoization TC - O(N*3*3) SC - O(N) + O(N*3)
+#include<bits/stdc++.h>
+
+int fun(int n, int day, int col, int last, vector<vector<int>>& points,vector<vector<int>>& dp)
+{
+  if(dp[day][col] != -1) return dp[day][col];
+  if(day == n) return 0;
+  int ma= 0;
+  for(int i = 0; i < 3; i++)
+  {
+    if(i != last)
+    {
+      ma = max(ma, points[day][i] + fun(n, day + 1, i, i, points,dp));
+    }
+  }
+  return dp[day][col] = ma;
+}
+
+int ninjaTraining(int n, vector<vector<int>> &points)
+{
+    vector<vector<int>>dp(n+1,vector<int>(3,-1));
+    int last = n;
+    int maxi = INT_MIN;
+    for(int i = 0; i < 3; i++)
+    {
+      maxi = max(maxi, points[0][i] + fun(n,1,i,i,points,dp));
+    }
+    return maxi;
+}
+
+Tabulation TC - O(N*4*3) SC -O(N*4)
+#include<bits/stdc++.h>
+
+int ninjaTraining(int n, vector<vector<int>> &points)
+{
+    vector<vector<int>>dp(n+1, vector<int>(4,0));
+    dp[0][0] = max(points[0][1], points[0][2]);
+    dp[0][1] = max(points[0][0], points[0][2]);
+    dp[0][2] = max(points[0][0], points[0][1]);
+    dp[0][3] = max(points[0][0], max(points[0][1], points[0][2]));
+
+    for(int i = 1; i < n; i++)
+    {
+      for(int last = 0; last < 4; last++)
+      {
+        dp[i][last] = 0;
+        for(int task = 0; task < 3; task++)
+        {
+          if(task != last)
+          {
+            int activity = points[i][task] + dp[i-1][task];
+            dp[i][last] = max(dp[i][last], activity);
+          }
+        }
+      }
+    }
+    return dp[n-1][3];
+}
+
+Space Optimization TC - O(N*4*3) SC - O(4)
+#include<bits/stdc++.h>
+
+int ninjaTraining(int n, vector<vector<int>> &points)
+{
+    vector<int>prev(4,0);
+    prev[0] = max(points[0][1], points[0][2]);
+    prev[1] = max(points[0][0], points[0][2]);
+    prev[2] = max(points[0][0], points[0][1]);
+    prev[3] = max(points[0][0], max(points[0][1], points[0][2]));
+
+    for(int i = 1; i < n; i++)
+    {
+      vector<int>temp(4);
+      for(int last = 0; last < 4; last++)
+      {
+        temp[last] = 0;
+        for(int task = 0; task < 3; task++)
+        {
+          if(task != last)
+          {
+            int activity = points[i][task] + prev[task];
+            temp[last] = max(temp[last], activity);
+          }
+        }
+      }
+      prev = temp;
+    }
+    return prev[3];
+}
