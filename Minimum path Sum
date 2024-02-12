@@ -1,0 +1,114 @@
+Recursion TC - 2 ^(NXM) SC - O(N-1 + M-1)
+#include <bits/stdc++.h> 
+int fun(int row, int col, vector<vector<int>>& grid)
+{
+    if(row == 0 && col == 0) return grid[0][0];
+    int x = INT_MAX;
+    int y = INT_MAX;
+    if(row > 0)
+    {
+        x = grid[row][col] + fun(row-1,col,grid);
+    }
+    if(col > 0)
+    {
+        y = grid[row][col] + fun(row, col-1,grid);
+    }
+    return min(x,y);
+}
+int minSumPath(vector<vector<int>> &grid) {
+    int n = grid.size();
+    int m = grid[0].size();
+    return fun(n-1,m-1,grid);
+}
+
+Memoization TC - O(NXM) SC - O(N-1 + M-1) + O(NXM)
+#include <bits/stdc++.h> 
+int fun(int row, int col, vector<vector<int>>& grid, vector<vector<int>>& dp)
+{
+    if(dp[row][col] != -1) return dp[row][col];
+    if(row == 0 && col == 0) return grid[0][0];
+    int x = INT_MAX;
+    int y = INT_MAX;
+    if(row > 0)
+    {
+        x = grid[row][col] + fun(row-1,col,grid,dp);
+    }
+    if(col > 0)
+    {
+        y = grid[row][col] + fun(row, col-1,grid,dp);
+    }
+    return dp[row][col] = min(x,y);
+}
+int minSumPath(vector<vector<int>> &grid) {
+    int n = grid.size();
+    int m = grid[0].size();
+    vector<vector<int>>dp(n+1,vector<int>(m+1,-1));
+    return fun(n-1,m-1,grid,dp);
+}
+
+Tabulation TC - O(NXM) SC - O(NXM)
+#include <bits/stdc++.h> 
+
+int minSumPath(vector<vector<int>> &grid) {
+    int n = grid.size();
+    int m = grid[0].size();
+    vector<vector<int>>dp(n+1,vector<int>(m+1));
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < m; j++)
+        {
+            if(i == 0 && j == 0)
+            {
+                dp[i][j] = grid[i][j];
+                continue;
+            }
+            int x = INT_MAX;
+            int y = INT_MAX;
+            if(i > 0)
+            {
+                x = grid[i][j] + dp[i-1][j];
+            }
+            if(j > 0)
+            {
+                y = grid[i][j] + dp[i][j-1];
+            }
+            dp[i][j] = min(x,y);
+        }
+    }
+    return dp[n-1][m-1];
+}
+
+Space Optimization TC -O(NXM) SC - O(M)
+#include <bits/stdc++.h> 
+
+int minSumPath(vector<vector<int>> &grid) {
+    int n = grid.size();
+    int m = grid[0].size();
+    vector<int>prev(m+1);
+    for(int i = 0; i < n; i++)
+    {
+        vector<int>temp(m+1);
+        for(int j = 0; j < m; j++)
+        {
+            if(i == 0 && j == 0)
+            {
+                temp[j] = grid[i][j];
+                prev[j] = grid[i][j];
+                continue;
+            }
+            int x = INT_MAX;
+            int y = INT_MAX;
+            if(i > 0)
+            {
+                x = grid[i][j] + prev[j];
+            }
+            if(j > 0)
+            {
+                y = grid[i][j] + temp[j-1];
+            }
+            temp[j] = min(x,y);
+        }
+            prev = temp;
+    }
+    return prev[m-1];
+}
