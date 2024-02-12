@@ -1,0 +1,169 @@
+Recursion TC -O(N*M*M*9)  SC - O(N)
+#include <bits/stdc++.h> 
+int fun(int i, int j1, int j2, int r, int c, vector<vector<int>>& grid)
+{
+    if(j1 >= c|| j1 < 0 || j2 >= c || j2 < 0) return -1e9;
+    if(i == r-1)
+    {
+        if(j1 == j2)
+        {
+            return grid[i][j1];
+        }
+        else
+        return grid[i][j1] + grid[i][j2];
+    }
+    int maxi = -1e9;
+    for(int dj = -1; dj <= +1; dj++)
+    {
+    for(int dx = -1; dx <= +1; dx++)
+    {
+      if(j1 == j2) 
+      maxi = max(maxi, grid[i][j1] + fun(i + 1, j1 + dj, j2 + dx, r, c, grid));
+      else
+      maxi = max(maxi, grid[i][j1] + grid[i][j2] + fun(i + 1, j1 + dj, j2 + dx, r, c, grid));
+    }
+    }
+    return maxi;
+}
+int maximumChocolates(int r, int c, vector<vector<int>> &grid) {
+    return fun(0,0,c-1,r,c,grid);
+}
+
+
+Memoization TC - O(N*M*M*9) SC - O(N) + O(N*M*M)
+#include <bits/stdc++.h> 
+int fun(int i, int j1, int j2, int r, int c, vector<vector<int>>& grid, vector<vector<vector<int>>>& dp)
+{
+    if(j1 >= c|| j1 < 0 || j2 >= c || j2 < 0) return -1e9;
+    if(dp[i][j1][j2] != -1) return dp[i][j1][j2];
+    if(i == r-1)
+    {
+        if(j1 == j2)
+        {
+            return grid[i][j1];
+        }
+        else
+        return grid[i][j1] + grid[i][j2];
+    }
+    int maxi = -1e9;
+    for(int dj = -1; dj <= +1; dj++)
+    {
+    for(int dx = -1; dx <= +1; dx++)
+    {
+      if(j1 == j2) 
+      maxi = max(maxi, grid[i][j1] + fun(i + 1, j1 + dj, j2 + dx, r, c, grid, dp));
+      else
+      maxi = max(maxi, grid[i][j1] + grid[i][j2] + fun(i + 1, j1 + dj, j2 + dx, r, c, grid, dp));
+    }
+    }
+    return dp[i][j1][j2] = maxi;
+}
+int maximumChocolates(int r, int c, vector<vector<int>> &grid) {
+    vector<vector<vector<int>>>dp(r+1,vector<vector<int>>(c+1,vector<int>(c+1,-1)));
+    return fun(0,0,c-1,r,c,grid,dp);
+}
+
+
+Tabulation TC -O(N*M*M*9) SC - O(M*M*N)
+#include <bits/stdc++.h> 
+int maximumChocolates(int r, int c, vector<vector<int>> &grid) {
+    vector<vector<vector<int>>>dp(r+1,vector<vector<int>>(c+1,vector<int>(c+1)));
+    for(int j1 = 0; j1 < c; j1++)
+    {
+        for(int j2 = 0; j2 < c; j2++)
+        {
+            if(j1 != j2)
+            {
+                dp[r-1][j1][j2] = grid[r-1][j1] + grid[r-1][j2];
+            } else {
+                dp[r-1][j1][j2] = grid[r-1][j1];
+            }
+        }
+    }
+
+    for (int r1 = r - 2; r1 >= 0; r1--)
+    {
+        for(int j1 = 0; j1 < c; j1++)
+        {
+            for(int j2 = 0; j2 < c; j2++)
+            {
+                int maxi = -1e9;
+                for(int dj1 = -1; dj1 <= +1; dj1++)
+                {
+                    for(int dj2 = -1; dj2 <= +1; dj2++)
+                    {
+                        int ans;
+                        if( j1 == j2) ans = grid[r1][j2];
+                        else ans = grid[r1][j1] + grid[r1][j2];
+                        int u = j1 + dj1;
+                        int v = j2 + dj2;
+                        if(u < 0 || v < 0 || u >= c || v >= c)
+                        {
+                            ans += -1e9;
+                        }
+                        else
+                        {
+                            ans += dp[r1+1][j1+dj1][j2+dj2];
+                        }
+                        maxi = max(ans,maxi);
+                    }
+                }
+                dp[r1][j1][j2] = maxi;
+            }
+        }
+    }
+    return dp[0][0][c-1];
+}
+
+Space Optimization TC - O(N*M*M*9) SC - O(M*M)
+#include <bits/stdc++.h> 
+int maximumChocolates(int r, int c, vector<vector<int>> &grid) {
+    vector<vector<int>>prev(c+1,vector<int>(c+1));
+    for(int j1 = 0; j1 < c; j1++)
+    {
+        for(int j2 = 0; j2 < c; j2++)
+        {
+            if(j1 != j2)
+            {
+                prev[j1][j2] = grid[r-1][j1] + grid[r-1][j2];
+            } else {
+                prev[j1][j2] = grid[r-1][j1];
+            }
+        }
+    }
+
+    for (int r1 = r - 2; r1 >= 0; r1--)
+    {
+        vector<vector<int>>temp(c+1,vector<int>(c+1));
+        for(int j1 = 0; j1 < c; j1++)
+        {
+            for(int j2 = 0; j2 < c; j2++)
+            {
+                int maxi = -1e9;
+                for(int dj1 = -1; dj1 <= +1; dj1++)
+                {
+                    for(int dj2 = -1; dj2 <= +1; dj2++)
+                    {
+                        int ans;
+                        if( j1 == j2) ans = grid[r1][j2];
+                        else ans = grid[r1][j1] + grid[r1][j2];
+                        int u = j1 + dj1;
+                        int v = j2 + dj2;
+                        if(u < 0 || v < 0 || u >= c || v >= c)
+                        {
+                            ans += -1e9;
+                        }
+                        else
+                        {
+                            ans += prev[j1+dj1][j2+dj2];
+                        }
+                        maxi = max(ans,maxi);
+                    }
+                }
+                temp[j1][j2] = maxi;
+            }
+        }
+        prev = temp;
+    }
+    return prev[0][c-1];
+}
