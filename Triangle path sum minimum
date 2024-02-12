@@ -1,0 +1,86 @@
+Recursion TC - O(2^N*N) SC - O(N-1 + N-1)
+#include <bits/stdc++.h>
+int fun(int row, int col, int n, vector<vector<int>> &triangle) {
+    if(row >=n || col > row) return 1e9; 
+	if(row == n-1) return triangle[row][col];
+	int x = fun(row + 1, col, n, triangle);
+	int y = fun(row+1, col+1, n, triangle);
+	return triangle[row][col] + min(x,y);
+}
+int minimumPathSum(vector<vector<int>>& triangle, int n){
+	return fun(0,0,n,triangle);
+}
+
+Memoization TC - O(NXN) SC - O(NXN) + O(N-1 + N-1)
+#include <bits/stdc++.h>
+int fun(int row, int col, int n, vector<vector<int>> &triangle, vector<vector<int>>& dp) {
+    if(row >=n || col > row) return 1e9; 
+	if(dp[row][col] != -1) return dp[row][col];
+	if(row == n-1) return triangle[row][col];
+	int x = fun(row + 1, col, n, triangle, dp);
+	int y = fun(row+1, col+1, n, triangle, dp);
+	return dp[row][col] = triangle[row][col] + min(x,y);
+}
+int minimumPathSum(vector<vector<int>>& triangle, int n){
+	vector<vector<int>>dp(n+1,vector<int>(n+1,-1));
+	return fun(0,0,n,triangle,dp);
+}
+
+Tabulation TC - O(NXN) SC - O(NXN)
+#include <bits/stdc++.h>
+int fun(int row, int col, int n, vector<vector<int>> &triangle, vector<vector<int>>& dp) {
+    if(row >=n || col > row) return 1e9; 
+	if(dp[row][col] != -1) return dp[row][col];
+	if(row == n-1) return triangle[row][col];
+	int x = fun(row + 1, col, n, triangle, dp);
+	int y = fun(row+1, col+1, n, triangle, dp);
+	return dp[row][col] = triangle[row][col] + min(x,y);
+}
+int minimumPathSum(vector<vector<int>>& triangle, int n){
+	vector<vector<int>>dp(n+1,vector<int>(n+1));
+	for(int col = 0; col < n; col++)
+	{
+		dp[n-1][col] = triangle[n-1][col];
+	}
+	for(int row = n-2; row >=0; row--)
+	{
+		for(int col = row; col >= 0; col--)
+		{
+			int x = 1e9;
+			int y = 1e9;
+			if(row < n)
+			x = dp[row+1][col];
+			if( row < n && col <= row)
+			y = dp[row+ 1][col+1];
+			dp[row][col] = triangle[row][col] + min(x,y);
+		}
+	}
+	return dp[0][0];
+}
+
+Space Optimization TC - O(NXN) SC - O(N)
+#include <bits/stdc++.h>
+
+int minimumPathSum(vector<vector<int>>& triangle, int n){
+    vector<int>prev(n+1);
+	for(int col = 0; col < n; col++)
+	{
+		prev[col] = triangle[n-1][col];
+	}
+	for(int row = n-2; row >=0; row--)
+	{
+		vector<int>temp(n+1);
+		for(int col = row; col >= 0; col--)
+		{
+			int x = 1e9;
+			int y = 1e9;
+			if(row < n)
+			x = prev[col];
+			if( row < n && col <= row)
+			y = prev[col+1];
+			temp[col] = triangle[row][col] + min(x,y);
+		}
+		prev = temp;
+	}
+	return prev[0];
+}
