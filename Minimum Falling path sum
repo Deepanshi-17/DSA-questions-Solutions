@@ -1,0 +1,131 @@
+Recursion TC - O(3^N*N) SC - O(N)
+class Solution {
+public:
+    int fun(int n, int row, int col, vector<vector<int>>& matrix)
+    {
+        if(row >= n || col >=n || col < 0 ) return INT_MAX;
+        if(row == n-1 && col >=0 && col < n) return matrix[row][col];
+        int x = fun(n, row + 1, col, matrix);
+        int y = fun(n, row + 1, col + 1, matrix);
+        int z = fun(n, row + 1, col - 1, matrix);
+        return matrix[row][col] + min(x,min(y,z));
+    }
+    int minFallingPathSum(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        int mini = INT_MAX;
+        for(int i = 0; i < n; i++)
+        {
+            mini = min(mini, fun(n,0,i,matrix));
+        }
+        return mini;
+    }
+};
+
+Memoization TC - O(N*N)  SC - o(N*N) + o(N)
+class Solution {
+public:
+    int fun(int n, int row, int col, vector<vector<int>>& matrix,vector<vector<int>>& dp)
+    {
+        if(row >= n || col >=n || col < 0 ) return INT_MAX;
+        if(dp[row][col] != -1) return dp[row][col];
+        if(row == n-1 && col >=0 && col < n) return matrix[row][col];
+        int x = fun(n, row + 1, col, matrix,dp);
+        int y = fun(n, row + 1, col + 1, matrix,dp);
+        int z = fun(n, row + 1, col - 1, matrix,dp);
+        return dp[row][col] = matrix[row][col] + min(x,min(y,z));
+    }
+    int minFallingPathSum(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        int mini = INT_MAX;
+        vector<vector<int>>dp(n+1,vector<int>(n+1,-1));
+        for(int i = 0; i < n; i++)
+        {
+            mini = min(mini, fun(n,0,i,matrix,dp));
+        }
+        return mini;
+    }
+};
+
+Tabulation TC - O(N*N) SC - O(N*N)
+class Solution {
+public:
+    int minFallingPathSum(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        vector<vector<int>>dp(n,vector<int>(n));
+        for(int i = 0; i < n; i++)
+        {
+            dp[0][i] = matrix[0][i];
+        }
+        for(int i = 1; i < n; i++)
+        {
+            for(int j = 0; j < n; j++)
+            {
+                int x = 1e9;
+                int y = 1e9;
+                int z = 1e9;
+                if(i > 0)
+                {
+                    x = dp[i-1][j];
+                }
+                if(i > 0 && j > 0)
+                {
+                    y = dp[i-1][j-1];
+                }
+                if(i > 0 && j < n-1)
+                {
+                    z = dp[i-1][j+1];
+                }
+                dp[i][j] = matrix[i][j] + min(x,min(y,z));
+            }
+        }
+        int minim = INT_MAX;
+        for(int i = 0; i <n; i++)
+        {
+            minim = min(minim, dp[n-1][i]);
+        }
+        return minim;
+    }
+};
+
+Space Optimization TC - O(NXN) SC - O(N)
+class Solution {
+public:
+    int minFallingPathSum(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        vector<int>prev(n);
+        for(int i = 0; i < n; i++)
+        {
+            prev[i] = matrix[0][i];
+        }
+        for(int i = 1; i < n; i++)
+        {
+            vector<int>temp(n+1);
+            for(int j = 0; j < n; j++)
+            {
+                int x = 1e9;
+                int y = 1e9;
+                int z = 1e9;
+                if(i > 0)
+                {
+                    x = prev[j];
+                }
+                if(i > 0 && j > 0)
+                {
+                    y = prev[j-1];
+                }
+                if(i > 0 && j < n-1)
+                {
+                    z = prev[j+1];
+                }
+                temp[j] = matrix[i][j] + min(x,min(y,z));
+            }
+            prev = temp;
+        }
+        int minim = INT_MAX;
+        for(int i = 0; i <n; i++)
+        {
+            minim = min(minim, prev[i]);
+        }
+        return minim;
+    }
+};
