@@ -1,0 +1,43 @@
+Solution 1 TC - O(N*M) SC - O(1)
+class Solution {
+public:
+    bool ispalindrome(string s)
+    {
+        int start = 0;
+        int end = s.length()-1;
+        while(start < end)
+        {
+            if(s[start] != s[end])
+            return false;
+            start++;
+            end--;
+        }
+        return true;
+    }
+    string firstPalindrome(vector<string>& words) {
+        for(auto it: words)
+        {
+            if(ispalindrome(it) == true)
+            return it;
+        }
+        return "";
+    }
+};
+
+Solution 2 - TC -O(N* M) SC - O(1)
+
+class Solution {
+public:
+    string firstPalindrome(vector<string>& words) {
+        for(auto it: words)
+        {
+            string st = it;
+            reverse(it.begin(),it.end());
+            if(it == st)
+            {
+                return st;
+            }
+        }
+        return "";
+    }
+};
